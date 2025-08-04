@@ -8,13 +8,17 @@ class Field:
     def __str__(self):
         return str(self.value)
 
-@dataclass
-class Name:
-    value: Field
+class Name(Field):
+    pass
 
-@dataclass
-class Phone:
-    value: Field
+class Phone(Field):
+    def __init__(self, value):
+        if not self.is_valid_number(value):
+            raise ValueError("Phone number must be 10 digits.")
+        super().__init__(value)
+
+    def is_valid_number(self, value):
+        return len(value) == 10
 
 class Record:
     def __init__(self, name):
@@ -28,20 +32,20 @@ class Record:
         self.phones.append(Phone(phone))
 
     def remove_phone(self, phone):
-        self.phones = [p for p in self.phones if p.value != phone]
+        self.phones.remove(self.find_phone(phone))
 
     def edit_phone(self, old_phone, new_phone):
-        if not self.phones:
-            return ValueError("No phones to edit.")
-        for p in self.phones:
-            if p.value == old_phone:
-                p.value = new_phone
-                break
+        phone = self.find_phone(old_phone)
+        if not phone:
+            raise ValueError(f"Phone {old_phone} not found.")
+
+        self.remove_phone(old_phone)
+        self.add_phone(new_phone)
 
     def find_phone(self, phone):
         for p in self.phones:
             if p.value == phone:
-                return p.value
+                return p
         return None
 
 class AddressBook(UserDict):
