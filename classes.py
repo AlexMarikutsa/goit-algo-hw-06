@@ -18,7 +18,7 @@ class Phone(Field):
         super().__init__(value)
 
     def is_valid_number(self, value):
-        return len(value) == 10
+        return len(value) == 10 and value.isdigit()
 
 class Record:
     def __init__(self, name):
@@ -39,8 +39,8 @@ class Record:
         if not phone:
             raise ValueError(f"Phone {old_phone} not found.")
 
-        self.remove_phone(old_phone)
         self.add_phone(new_phone)
+        self.remove_phone(old_phone)
 
     def find_phone(self, phone):
         for p in self.phones:
